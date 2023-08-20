@@ -14,6 +14,11 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, track
 from rich.prompt import Prompt
 
 from . import __name__ as APP_NAME
+from .tree import Tree, TreeNode
+
+##################################################################################
+# BoilerPlate
+##################################################################################
 
 # generage CLI app object
 app = typer.Typer(rich_markup_mode="rich", add_completion=False)
@@ -27,11 +32,11 @@ def version_callback(version: bool):
     Print app version and exit
     """
     if version:
-        rprint(f"tree_thing ('tree_thing') Version: {__version__}")
+        rprint(f"tree_thing ('{APP_NAME}') Version: {__version__}")
         raise typer.Exit()
 
 
-@app.callback(help="[bold]tree_thing[/bold] CLI App for [green]PagerDuty[/green]")
+@app.callback(help="[bold]tree_thing[/bold] CLI App")
 def app_options(
     _: bool = typer.Option(
         None,
@@ -55,6 +60,28 @@ def app_options(
 ##################################################################################
 # Regular 'ol Commands
 ##################################################################################
+
+
+@app.command(rich_help_panel="Main")
+def tree_stuff() -> None:
+    """Do tree stuff"""
+
+    a_node = TreeNode(4, None, None)
+    b_node = TreeNode(5, None, None)
+    c_node = TreeNode(2, a_node, b_node)
+    d_node = TreeNode(1, None, None)
+    e_node = TreeNode(1, c_node, d_node)
+
+    whole_tree = Tree(e_node)
+
+    for node in whole_tree:
+        if node.value is not None:
+            node.value *= 10
+
+    for node in whole_tree:
+        rprint(
+            f"[green]Tree node[/green]'s value is: [bold blue]{node.value}[/bold blue]"
+        )
 
 
 @app.command(rich_help_panel="Prompted")
